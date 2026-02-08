@@ -6,24 +6,34 @@ DATA_DIR="pokemon_data"
 
 mkdir -p $DATA_DIR
 
+PIDS=()   # store process IDs
+
 echo "Fetching Pokémon data in parallel..."
 
-# Loop and start background jobs
 for pokemon in "${POKEMONS[@]}"; do
     (
         echo "Fetching $pokemon..."
         curl -s --fail "$API_URL/$pokemon" -o "$DATA_DIR/$pokemon.json"
 
-        if [ $? -eq 0 ]; then
-            echo "$pokemon saved successfully ✅"
-        else
-            echo "Error fetching $pokemon ❌" >> errors.txt
+        if [ $? -ne 0 ]; then
+            echo "Error fetching $pokemon" >> errors.txt
+            exit 1
         fi
-    ) &   # Run in background
+    ) &
+
+    PIDS+=($!)   # save PID
 done
 
-# Wait for all background jobs to finish
-wait
+# Wait and check processes
+for pid in "${PIDS[@]}"; do
+    wait $pid
+    STATUS=$?
 
-echo "All Pokémon data fetched!"
+    if [ $STATUS -ne 0 ]; then
+        echo "Process $pid failed. Killing it..."
+        kill $pid 2>/dev/null
+    fi
+done
+
+echo "All background processes completed."
 
