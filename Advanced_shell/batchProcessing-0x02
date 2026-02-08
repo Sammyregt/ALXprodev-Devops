@@ -2,7 +2,7 @@
 
 
 # List of Pokemon
-POKEMONS=("bulbasaur" "ivysaur" "vensaur" "charmander" "charmeleon")
+POKEMONS=("bulbasaur" "ivysaur" "venusaur" "charmander" "charmeleon")
 
 # create folder to store data
 mkdir -p pokemon_data
