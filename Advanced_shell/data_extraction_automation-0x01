@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# JSON file from the previous task
+JSON_FILE=data.json
+
+# Extract name
+NAME=$(jq -r '.name' $JSON_FILE)
+
+#Extract height (API gives decimeters, convert to meters)
+HEIGHT=$(jq -r '.height' $JSON_FILE | awk '{printf "%.1f", $1/10}')
+
+# Extract weight (API gives hectograms, convert to kg)
+WEIGHT=$(jq -r '.weight' $JSON_FILE | awk '{printf "%d", $1/10}')
+
+# Extract type (Pokemon can have multiple types, take the first one)
+TYPE=$(jq -r '.types[0].type.name' $JSON_FILE | sed 's/\b\(.\)/\u\1/')
+
+# print in human-readable format
+echo "$NAME is of type $TYPE, weighs ${WEIGHT}kg, and is ${HEIGHT}m tall."
