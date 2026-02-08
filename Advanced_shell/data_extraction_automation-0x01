@@ -4,7 +4,7 @@
 JSON_FILE=data.json
 
 # Extract name
-NAME=$(jq -r '.name' $JSON_FILE)
+NAME=$(jq -r '.name' $JSON_FILE | sed 's/.*/\u&/')
 
 #Extract height (API gives decimeters, convert to meters)
 HEIGHT=$(jq -r '.height' $JSON_FILE | awk '{printf "%.1f", $1/10}')
